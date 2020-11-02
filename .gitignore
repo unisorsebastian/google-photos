@@ -12,10 +12,11 @@ target/
 .settings
 .springBeans
 .sts4-cache
-/.mvn/
+
 
 ### IntelliJ IDEA ###
 .idea
+.mvn
 *.iws
 *.iml
 *.ipr
@@ -31,3 +32,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/.mvn/
