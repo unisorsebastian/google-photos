@@ -3,6 +3,7 @@ package ro.jmind.photos.commands;
 import com.google.photos.types.proto.Album;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import ro.jmind.photos.model.AuditResult;
 import ro.jmind.photos.service.CommandService;
 import ro.jmind.photos.service.DataService;
 import ro.jmind.photos.service.FileService;
@@ -109,7 +110,7 @@ public class Commands {
 
     @ShellMethod("audit")
     public String audit() {
-        commandService.auditMediaCreation();
+        List<AuditResult> auditResults = commandService.auditMediaCreation();
         String format = String.format("audit is done");
         return format;
     }

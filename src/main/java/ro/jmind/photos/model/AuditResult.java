@@ -1,10 +1,14 @@
 package ro.jmind.photos.model;
 
+import com.google.photos.types.proto.Album;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class AuditResult {
     private String localAlbum;
     private int localMediaCount;
-    private String albumId;
-    private int remoteMediaCount;
+    private List<Album> remoteAlbums = new ArrayList<>();
 
     public String getLocalAlbum() {
         return localAlbum;
@@ -22,19 +26,8 @@ public class AuditResult {
         this.localMediaCount = localMediaCount;
     }
 
-    public String getAlbumId() {
-        return albumId;
+    public List<Album> getRemoteAlbums() {
+        return remoteAlbums;
     }
 
-    public void setAlbumId(String albumId) {
-        this.albumId = albumId;
-    }
-
-    public int getRemoteMediaCount() {
-        return remoteMediaCount;
-    }
-
-    public void setRemoteMediaCount(int remoteMediaCount) {
-        this.remoteMediaCount = remoteMediaCount;
-    }
 }

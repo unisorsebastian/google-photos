@@ -187,7 +187,7 @@ public class CommandService {
         return (int) (sum / 1024 / 1024);
     }
 
-    public void auditMediaCreation() {
+    public List<AuditResult> auditMediaCreation() {
         File directory = new File(auditDataLocation);
         File errorDirectory = fileService.createDirectory(directory, "/_error");
         File successDirectory = fileService.createDirectory(directory, "/_success");
@@ -196,74 +196,67 @@ public class CommandService {
 
         if (stringListMap.isEmpty()) {
             logger.info("no data to update");
-            return;
+            return Collections.EMPTY_LIST;
         }
 
         List<Album> remoteAlbums = googleService.getRemoteAlbums();
 
-        List<AuditResult> auditResults = new ArrayList<>();
+        final List<AuditResult> auditResults = new ArrayList<>();
 
-        stringListMap.forEach((s, uploadDetails) -> {
-
-            File jsonFile = new File(directory.getAbsolutePath() + "/" + s + ".json");
-
-            List<Album> foundRemoteAlbums = remoteAlbums.stream()
-                    .filter(album -> album.getTitle().equals(s))
-                    .collect(Collectors.toList());
-
-            int foundAlbumCount = 0;
-            for (Album album : foundRemoteAlbums) {
-                foundAlbumCount++;
-                if (foundAlbumCount > 1) {
-                    AuditResult ar = new AuditResult();
-                    ar.setLocalAlbum(s);
-                    ar.setLocalMediaCount(uploadDetails.size());
-                    ar.setAlbumId(album.getId());
-                    ar.setRemoteMediaCount((int) album.getMediaItemsCount());
-                    auditResults.add(ar);
-                } else {
-                    AuditResult ar = new AuditResult();
-                    ar.setLocalAlbum(s);
-                    ar.setLocalMediaCount(uploadDetails.size());
-                    ar.setAlbumId(album.getId());
-                    ar.setRemoteMediaCount((int) album.getMediaItemsCount());
-                    auditResults.add(ar);
-                }
-            }
-
-            if (foundRemoteAlbums.size() > 1) {
-                foundRemoteAlbums.forEach(album -> {
-                    AuditResult ar = new AuditResult();
-                    ar.setLocalAlbum(s);
-                    ar.setLocalMediaCount(uploadDetails.size());
-                    ar.setAlbumId(album.getId());
-                    ar.setRemoteMediaCount((int) album.getMediaItemsCount());
+        stringListMap.entrySet().stream()
+                .forEach(stringListEntry -> {
+                    final String localAlbumName = stringListEntry.getKey();
+                    final List<UploadDetail> localDetails = stringListEntry.getValue();
+                    final List<Album> foundRemoteAlbums = remoteAlbums.stream()
+                            .filter(remoteAlbum -> remoteAlbum.getTitle().equals(localAlbumName))
+                            .collect(Collectors.toList());
+                    final AuditResult ar = new AuditResult();
+                    ar.setLocalAlbum(localAlbumName);
+                    ar.setLocalMediaCount(localDetails.size());
+                    ar.getRemoteAlbums().addAll(foundRemoteAlbums);
                     auditResults.add(ar);
                 });
-            } else {
-                Album album = foundRemoteAlbums.get(0);
-                AuditResult ar = new AuditResult();
-                ar.setLocalAlbum(s);
-                ar.setLocalMediaCount(uploadDetails.size());
-                ar.setAlbumId(album.getId());
-                ar.setRemoteMediaCount((int) album.getMediaItemsCount());
+
+        //calculate missing local albums
+        remoteAlbums.stream().forEach(remoteAlbum -> {
+
+            String localAlbumFound = stringListMap.entrySet().stream()
+                    .map(stringListEntry -> stringListEntry.getKey())
+                    .filter(localAlbumName -> remoteAlbum.getTitle().equalsIgnoreCase(localAlbumName))
+                    .findFirst().orElse(null);
+            if (localAlbumFound == null) {
+                final AuditResult ar = new AuditResult();
+                ar.setLocalAlbum(null);
+                ar.setLocalMediaCount(0);
+                ar.getRemoteAlbums().add(remoteAlbum);
                 auditResults.add(ar);
             }
-
-
-//            try {
-//                logger.info("processing album {} containing {} items", s, uploadDetails.size());
-//                googleService.addMediaInAlbums(uploadDetails);
-//                //move file to success
-//                fileService.writeJson(jsonFile, uploadDetails);
-//                fileService.moveFile(successDirectory, jsonFile);
-//            } catch (ApplicationBusinessException e) {
-//                logger.info("fail processing album {}", s, e);
-//                fileService.writeJson(jsonFile, uploadDetails);
-//                fileService.moveFile(errorDirectory, jsonFile);
-//            }
         });
 
+        final List<AuditResult> identicalItemsCount = auditResults.stream()
+                .filter(auditResult -> auditResult.getLocalAlbum() != null)
+                .filter(auditResult -> auditResult.getRemoteAlbums().size() == 1)
+                .filter(auditResult -> auditResult.getRemoteAlbums().get(0).getMediaItemsCount() == auditResult.getLocalMediaCount())
+                .collect(Collectors.toList());
+        final List<AuditResult> multipleRemoteAlbums = auditResults.stream()
+                .filter(auditResult -> auditResult.getRemoteAlbums().size() > 1)
+                .collect(Collectors.toList());
+        final List<AuditResult> differentItemsCount = auditResults.stream()
+                .filter(auditResult -> auditResult.getLocalAlbum() != null)
+                .filter(auditResult -> auditResult.getRemoteAlbums().size() == 1)
+                .filter(auditResult -> auditResult.getRemoteAlbums().get(0).getMediaItemsCount() != auditResult.getLocalMediaCount())
+                .collect(Collectors.toList());
+        final List<AuditResult> missingRemoteAlbum = auditResults.stream()
+                .filter(auditResult -> auditResult.getRemoteAlbums().size() == 0)
+                .filter(auditResult -> auditResult.getLocalMediaCount() > 0)
+                .collect(Collectors.toList());
+        final List<AuditResult> missingLocalAlbums = auditResults.stream()
+                .filter(auditResult -> auditResult.getLocalAlbum() == null)
+                .filter(auditResult -> auditResult.getRemoteAlbums().size() == 1)
+                .collect(Collectors.toList());
+
+
+        return auditResults;
     }
 
 
