@@ -18,6 +18,7 @@ class FileServiceTest {
                 .filter(file -> file.isFile() == true)
                 .map(file -> {
                     return file.getName();
+
                 })
                 .map(s -> s.split("\\.")[1])
                 .collect(Collectors.toSet());
