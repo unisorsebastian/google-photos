@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -139,6 +140,30 @@ public class CheckJpegFilesVsOneDriveTest {
                 e.printStackTrace();
             }
         });
+        System.out.println(affectedFiles);
+    }
+
+    @Test
+    public void renameFilesPattern() {
+        Path jpegPath = Paths.get("d:\\_photosJpeg\\xyz");
+        String replace = "";
+        String replceWith = "";
+        List<String> affectedFiles = new ArrayList<>();
+        List<FileDetails> jpegFileDetails = fileService.getRecursiveFileList(jpegPath.toString()).stream()
+                .map(file -> new FileDetails.FileDetailsBuilder().fromFile(file))
+                .collect(Collectors.toList());
+        jpegFileDetails.stream()
+                .filter(fileDetails -> fileDetails.getFile().getName().contains(replace))
+                .forEach(fileDetails -> {
+                    Path absoluteFilePath = fileDetails.getFile().getAbsoluteFile().toPath();
+                    String newName = fileDetails.getFile().getName().replace(replace, replceWith);
+                    try {
+                        Files.move(absoluteFilePath, absoluteFilePath.resolveSibling(newName), StandardCopyOption.REPLACE_EXISTING);
+                        affectedFiles.add("absoluteFilePath");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
         System.out.println(affectedFiles);
     }
 

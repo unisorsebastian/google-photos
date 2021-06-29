@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,14 +39,15 @@ public class FileService {
 
 
     public List<File> getDirectoryList(File directory) {
-        File[] listFiles = directory.listFiles();
-        List<File> result = new ArrayList<>();
-        for (File f : listFiles) {
-            if (f.isDirectory()) {
-                result.add(f);
-            }
-        }
-        return result;
+        return Arrays.asList(directory.listFiles(File::isDirectory));
+//        File[] listFiles = directory.listFiles();
+//        List<File> result = new ArrayList<>();
+//        for (File f : listFiles) {
+//            if (f.isDirectory()) {
+//                result.add(f);
+//            }
+//        }
+//        return result;
     }
 
     private void gatherFilesInList(List<File> fileList, File directory) {
