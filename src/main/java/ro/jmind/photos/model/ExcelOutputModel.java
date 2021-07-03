@@ -71,8 +71,8 @@ public class ExcelOutputModel {
             return this;
         }
 
-        public ExcelOutputBuilder setDescription(Cell description) {
-            String stringCellValue = description.getStringCellValue();
+        public ExcelOutputBuilder setStringDescription(String stringCellValue) {
+            stringCellValue = stringCellValue.replace("\n\n", ", ");
             Pattern pattern = Pattern.compile("\n");
             Matcher matcher = pattern.matcher(stringCellValue);
             int count = 0;
@@ -81,22 +81,41 @@ public class ExcelOutputModel {
             }
             if (stringCellValue.contains("•")) {
                 stringCellValue = stringCellValue.replace("•", "");
-                this.description = Stream.of(stringCellValue.split("\n", -1))
-                        .map(s -> s.trim())
-                        .map(s -> StringUtils.capitalize(s))
-                        .collect(Collectors.toList());
+                this.description = splitBy(stringCellValue, "\n");
             } else if (count > 2) {
-                this.description = Stream.of(stringCellValue.split("\n", -1))
-                        .map(s -> s.trim())
-                        .map(s -> StringUtils.capitalize(s))
-                        .collect(Collectors.toList());
+                this.description = splitBy(stringCellValue, "\n");
             } else {
-                this.description = Stream.of(stringCellValue.split(",", -1))
-                        .map(s -> s.trim())
-                        .map(s -> StringUtils.capitalize(s))
-                        .collect(Collectors.toList());
+                this.description = splitBy(stringCellValue, ", ");
             }
             return this;
+        }
+
+        public List<String> splitBy(String value, String splitString) {
+            return Stream.of(value.split(splitString, -1))
+                    .map(s -> s.trim())
+                    .map(s -> {
+                        if (s.length() > 1 && s.substring(0, 1).equals("-")) {
+                            return s.substring(1);
+                        }
+                        return s;
+                    })
+                    .map(s -> {
+                        if (s.length() < 1) {
+                            return s;
+                        }
+                        String lastChar = s.substring(s.length() - 1);
+                        if (lastChar.equals(";") || lastChar.equals(".")) {
+                            return s.substring(0, s.length() - 1);
+                        }
+                        return s;
+                    })
+                    .map(s -> StringUtils.capitalize(s))
+                    .collect(Collectors.toList());
+        }
+
+        public ExcelOutputBuilder setDescription(Cell description) {
+            String stringCellValue = description.getStringCellValue();
+            return setStringDescription(stringCellValue);
         }
 
         public ExcelOutputBuilder setPrice(Cell price) {

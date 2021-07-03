@@ -112,7 +112,7 @@ public class ExcelService {
                 inpPic = (XSSFPicture) shape;
             } catch (ClassCastException e) {
                 //fails in Camere IP_MegaPixel Hikvision
-                logger.info("unable to get picture, will skip it", e);
+                logger.info("unable to get picture, will skip it");
                 continue;
             }
 
@@ -145,15 +145,17 @@ public class ExcelService {
             String pictureNameFormat = String.format("%s_r%sc%s_%s.jpeg", sourceSheetName.replace(" ", ""), rowLocation, col1Location, pictureName);
             inpPic.getShapeName();
             PictureData pict = inpPic.getPictureData();
-            Path pictureFilePath = Paths.get(excelOutputImages, pictureNameFormat);
-            FileOutputStream out = new FileOutputStream(new File(pictureFilePath.toString()));
+            Path pictureParentPath = Paths.get(excelOutputImages, sourceSheetName);
+            Files.createDirectories(pictureParentPath);
+            Path pictureFilePath = Paths.get(pictureParentPath.toString(), pictureNameFormat);
+            FileOutputStream out = new FileOutputStream(new File(pictureFilePath.toString()), true);
             byte[] data = pict.getData();
             out.write(data);
             out.close();
             ExcelOutputModel excelOutputModel = new ExcelOutputModel.ExcelOutputBuilder()
                     .setRow(String.valueOf(rowLocation))
                     .setUid(pictureName)
-                    .setPictureLocation(excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + pictureNameFormat)
+                    .setPictureLocation(excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + sourceSheetName + FILE_SYSTEM_PATH_SEPARATOR + pictureNameFormat)
                     .setPrice(cellPrice)
                     .setDescription(sheet.getRow(rowLocation).getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL))
                     .createExcelOutputModel();
