@@ -9,7 +9,6 @@ public class Commands {
 
     private CommandService commandService;
 
-
     public Commands(CommandService commandService) {
         this.commandService = commandService;
     }
