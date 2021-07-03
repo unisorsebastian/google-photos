@@ -105,7 +105,7 @@
     </dependencies>
 
     <build>
-
+        <finalName>excel-parse-wip</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -118,6 +118,8 @@
                         <configuration>
                             <outputDirectory>./delivery/</outputDirectory>
                             <finalName>excel-parse</finalName>
+                            <mainClass>ro.jmind.photos.PhotosApplication</mainClass>
+                            <layout>JAR</layout>
                         </configuration>
                     </execution>
                 </executions>
