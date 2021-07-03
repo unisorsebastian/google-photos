@@ -13,6 +13,13 @@ public class Commands {
         this.commandService = commandService;
     }
 
+    @ShellMethod(
+            value = "Exit the shell.",
+            key = {"close", "shutdown"}
+    )
+    public void closeApplication() {
+        System.exit(0);
+    }
 
     @ShellMethod("Read data from excel 1")
     public String readExcelData(String excelFileName) {
