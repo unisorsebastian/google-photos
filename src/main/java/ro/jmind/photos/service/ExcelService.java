@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class ExcelService {
     public static final String FILE_SYSTEM_PATH_SEPARATOR = System.getProperty("file.separator");
     private static final Logger logger = LoggerFactory.getLogger(ExcelService.class);
+
     @Value("${excelOutputImages}")
     private String excelOutputImages;
 
@@ -48,7 +49,7 @@ public class ExcelService {
         final FileInputStream sourceFile = new FileInputStream(new File(excelFileName));
         final Workbook workbook = new XSSFWorkbook(sourceFile);
         List<ExcelOutputModel> excelOutputData = null;
-//
+
         final String electricVehicleSheet = "ElectricVehicle chargers";
         excelOutputData = collectData(workbook, electricVehicleSheet);
         writeExcelOutputModel(excelOutputData, electricVehicleSheet);
@@ -92,7 +93,6 @@ public class ExcelService {
         final String acceroriiSheet = "Accesorii_CCTV";
         excelOutputData = collectData(workbook, acceroriiSheet);
         writeExcelOutputModel(excelOutputData, acceroriiSheet);
-
 
     }
 
