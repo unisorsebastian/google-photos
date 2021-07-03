@@ -39,6 +39,15 @@ public class Commands {
 //        return format;
 //    }
 
+    @ShellMethod("Read data from excel 1")
+    public String readExcelData(String excelFileName) {
+        long startTime = System.currentTimeMillis();
+        commandService.processFile(excelFileName);
+        double timeTook = (double) Math.round((((double) (System.currentTimeMillis() - startTime) / 1000) * 100)) / 100;
+        String format = String.format("done reading the excel file \"%s\" in %s seconds", excelFileName, timeTook);
+        return format;
+    }
+
     @ShellMethod("Create json files with local data")
     public String prepareDataToUpload() {
         long startTime = System.currentTimeMillis();

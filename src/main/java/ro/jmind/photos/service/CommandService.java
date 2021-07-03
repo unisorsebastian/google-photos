@@ -10,6 +10,7 @@ import ro.jmind.photos.model.AuditResult;
 import ro.jmind.photos.model.UploadDetail;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,12 +36,25 @@ public class CommandService {
     private FileService fileService;
     private DataService dataService;
     private GoogleService googleService;
+    private ExcelService excelService;
 
 
-    public CommandService(FileService fileService, DataService dataService, GoogleService googleService) {
+    public CommandService(FileService fileService, DataService dataService, GoogleService googleService, ExcelService excelService) {
         this.fileService = fileService;
         this.dataService = dataService;
         this.googleService = googleService;
+        this.excelService = excelService;
+    }
+
+    public void processFile(String excelFileName) {
+        logger.info("start processing excel file {}", excelFileName);
+        try {
+            excelService.processFile(excelFileName);
+        } catch (IOException e) {
+            logger.error("some unhandled exception", e);
+            throw new RuntimeException("some unhandled exception", e);
+        }
+        logger.info("done processing excel file {} {}", excelFileName, excelService);
     }
 
     public void prepareDataToUpload() {
