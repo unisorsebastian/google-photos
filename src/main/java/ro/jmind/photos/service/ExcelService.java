@@ -34,6 +34,8 @@ public class ExcelService {
     @Value("${excelImagesRelativePath}")
     private String excelImagesRelativePath;
 
+    public ExcelService() {
+    }
 
     public void processFile(String excelFileName) throws IOException {
         if (!Paths.get(excelOutputImages).toFile().exists()) {
@@ -90,9 +92,9 @@ public class ExcelService {
         excelOutputData = collectData(workbook, interfonSheet);
         writeExcelOutputModel(excelOutputData, interfonSheet);
 
-        final String acceroriiSheet = "Accesorii_CCTV";
-        excelOutputData = collectData(workbook, acceroriiSheet);
-        writeExcelOutputModel(excelOutputData, acceroriiSheet);
+        final String accesoriiSheet = "Accesorii_CCTV";
+        excelOutputData = collectData(workbook, accesoriiSheet);
+        writeExcelOutputModel(excelOutputData, accesoriiSheet);
 
     }
 
