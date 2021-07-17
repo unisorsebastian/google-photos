@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +36,7 @@ public class ExcelServiceTest {
     private String outputImages;
 
     @Test
+    @IfProfileValue(name = "spring.profiles.active", value = "integration")
     public void readFileTest() {
         assertNotNull(outputImages);
         String filePath = "D:\\Users\\sebastian\\Documents\\excel\\oferta_email_format_xlsx (4).xlsx";
@@ -46,6 +48,7 @@ public class ExcelServiceTest {
     }
 
     @Test
+    @IfProfileValue(name = "spring.profiles.active", value = "integration")
     public void enhanceData() throws IOException {
         String filePath = "D:\\Users\\sebastian\\Documents\\excel\\oferta_email_format_xlsx (4).xlsx";
         String sheetName = "Accesorii_alarme";
