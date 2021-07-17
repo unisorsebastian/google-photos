@@ -51,57 +51,171 @@ public class ExcelService {
         final FileInputStream sourceFile = new FileInputStream(new File(excelFileName));
         final Workbook workbook = new XSSFWorkbook(sourceFile);
         List<ExcelOutputModel> excelOutputData = null;
+        List<ExcelOutputModel> dataWithoutPictures = null;
+        List<ExcelOutputModel> enrichedData = null;
 
-        final String electricVehicleSheet = "ElectricVehicle chargers";
-        excelOutputData = collectData(workbook, electricVehicleSheet);
-        writeExcelOutputModel(excelOutputData, electricVehicleSheet);
+//        final String electricVehicleSheet = "ElectricVehicle chargers";
+//        excelOutputData = collectData(workbook, electricVehicleSheet);
+//        writeExcelOutputModel(excelOutputData, electricVehicleSheet);
+//
+//        final String ipCameraSheet = "Camere IP_MegaPixel Hikvision";
+//        excelOutputData = collectData(workbook, ipCameraSheet);
+//        writeExcelOutputModel(excelOutputData, ipCameraSheet);
+//
+//        final String feverScreeningSheet = "FeverScreeningThermal";
+//        excelOutputData = collectData(workbook, feverScreeningSheet);
+//        writeExcelOutputModel(excelOutputData, feverScreeningSheet);
+//
+//        final String idDvrSheet = "IP-NVR Hikvision";
+//        excelOutputData = collectData(workbook, idDvrSheet);
+//        writeExcelOutputModel(excelOutputData, idDvrSheet);
+//
+//        final String ipCameraHiWatchSheet = "Camere IP HiWatch by Hikvision";
+//        excelOutputData = collectData(workbook, ipCameraHiWatchSheet);
+//        writeExcelOutputModel(excelOutputData, ipCameraHiWatchSheet);
+//
+//        final String sistemeTurboSheet = "Sisteme_TurboHD_Hikvision";
+//        excelOutputData = collectData(workbook, sistemeTurboSheet);
+//        writeExcelOutputModel(excelOutputData, sistemeTurboSheet);
+//
+//        final String camereTVISheet = "Camere TVI HiWatch by Hikvision";
+//        excelOutputData = collectData(workbook, camereTVISheet);
+//        writeExcelOutputModel(excelOutputData, camereTVISheet);
+//
+//        final String parkingSheet = "LPR&parking HIKVISION";
+//        excelOutputData = collectData(workbook, parkingSheet);
+//        writeExcelOutputModel(excelOutputData, parkingSheet);
+//
+//        final String turboVtxSheet = "Sisteme_TURBO_VTX";
+//        excelOutputData = collectData(workbook, turboVtxSheet);
+//        writeExcelOutputModel(excelOutputData, turboVtxSheet);
+//
+//        final String interfonSheet = "VideoInterfoane Hikvision";
+//        excelOutputData = collectData(workbook, interfonSheet);
+//        writeExcelOutputModel(excelOutputData, interfonSheet);
+//
+//        final String accesoriiSheet = "Accesorii_CCTV";
+//        excelOutputData = collectData(workbook, accesoriiSheet);
+//        writeExcelOutputModel(excelOutputData, accesoriiSheet);
+//
+//        final String naAnalogiceConventionaleSheet = "NA_analogice_conventionale";
+//        excelOutputData = collectData(workbook, naAnalogiceConventionaleSheet);
+//        writeExcelOutputModel(excelOutputData, naAnalogiceConventionaleSheet);
 
-        final String ipCameraSheet = "Camere IP_MegaPixel Hikvision";
-        excelOutputData = collectData(workbook, ipCameraSheet);
-        writeExcelOutputModel(excelOutputData, ipCameraSheet);
+//        final String gsmBodyCameraHikvision = "GSM Body Camera Hikvision";
+//        excelOutputData = collectData(workbook, gsmBodyCameraHikvision);
+//        writeExcelOutputModel(excelOutputData, gsmBodyCameraHikvision);
+//
+//        final String smartHomeSolutions = "SmartHome solutions";
+//        excelOutputData = collectData(workbook, smartHomeSolutions);
+//        writeExcelOutputModel(excelOutputData, smartHomeSolutions);
 
-        final String feverScreeningSheet = "FeverScreeningThermal";
-        excelOutputData = collectData(workbook, feverScreeningSheet);
-        writeExcelOutputModel(excelOutputData, feverScreeningSheet);
+//        final String incendiuAdresabilGlobalFire = "Incendiu_Adresabil_GLOBAL_FIRE_";
+//        excelOutputData = collectData(workbook, incendiuAdresabilGlobalFire);
+//        writeExcelOutputModel(excelOutputData, incendiuAdresabilGlobalFire);
 
-        final String idDvrSheet = "IP-NVR Hikvision";
-        excelOutputData = collectData(workbook, idDvrSheet);
-        writeExcelOutputModel(excelOutputData, idDvrSheet);
+//        final String incendiuAdresabilTeletek = "Incendiu_adresabil_Teletek";
+//        excelOutputData = collectData(workbook, incendiuAdresabilTeletek);
+//        writeExcelOutputModel(excelOutputData, incendiuAdresabilTeletek);
 
-        final String ipCameraHiWatchSheet = "Camere IP HiWatch by Hikvision";
-        excelOutputData = collectData(workbook, ipCameraHiWatchSheet);
-        writeExcelOutputModel(excelOutputData, ipCameraHiWatchSheet);
+        //TODO no pictures in src - not working
+//        final String incendiuBentel = "Incendiu Bentel adr si conv";
+//        excelOutputData = collectData(workbook, incendiuBentel);
+//        writeExcelOutputModel(excelOutputData, incendiuBentel);
 
-        final String sistemeTurboSheet = "Sisteme_TurboHD_Hikvision";
-        excelOutputData = collectData(workbook, sistemeTurboSheet);
-        writeExcelOutputModel(excelOutputData, sistemeTurboSheet);
+//        final String incendiuConventional = "Incendiu_conventional";
+//        excelOutputData = collectData(workbook, incendiuConventional);
+//        writeExcelOutputModel(excelOutputData, incendiuConventional);
 
-        final String camereTVISheet = "Camere TVI HiWatch by Hikvision";
-        excelOutputData = collectData(workbook, camereTVISheet);
-        writeExcelOutputModel(excelOutputData, camereTVISheet);
+        //TODO collect row without pic - partial work
+//        final String surseAlimentareEN54 = "Surse alimentare EN54";
+//        excelOutputData = collectData(workbook, surseAlimentareEN54);
+//        writeExcelOutputModel(excelOutputData, surseAlimentareEN54);
+//
+//        final String pyronixHikvision = "Pyronix-Hikvision";
+//        excelOutputData = collectData(workbook, pyronixHikvision);
+//        writeExcelOutputModel(excelOutputData, pyronixHikvision);
 
-        final String parkingSheet = "LPR&parking HIKVISION";
-        excelOutputData = collectData(workbook, parkingSheet);
-        writeExcelOutputModel(excelOutputData, parkingSheet);
+//        final String teletek = "TELETEK";
+//        excelOutputData = collectData(workbook, teletek);
+//        writeExcelOutputModel(excelOutputData, teletek);
 
-        final String turboVtxSheet = "Sisteme_TURBO_VTX";
-        excelOutputData = collectData(workbook, turboVtxSheet);
-        writeExcelOutputModel(excelOutputData, turboVtxSheet);
+//        final String teletekWireless = "Teletek Wireless";
+//        excelOutputData = collectData(workbook, teletekWireless);
+//        writeExcelOutputModel(excelOutputData, teletekWireless);
 
-        final String interfonSheet = "VideoInterfoane Hikvision";
-        excelOutputData = collectData(workbook, interfonSheet);
-        writeExcelOutputModel(excelOutputData, interfonSheet);
+//        final String eldesAlarms = "ELDES alarms";
+//        excelOutputData = collectData(workbook, eldesAlarms);
+//        writeExcelOutputModel(excelOutputData, eldesAlarms);
 
-        final String accesoriiSheet = "Accesorii_CCTV";
-        excelOutputData = collectData(workbook, accesoriiSheet);
-        writeExcelOutputModel(excelOutputData, accesoriiSheet);
+//        final String opex = "OPTEX";
+//        excelOutputData = collectData(workbook, opex);
+//        writeExcelOutputModel(excelOutputData, opex);
 
+//        final String accesoriiAlarme = "Accesorii_alarme";
+//        excelOutputData = collectData(workbook, accesoriiAlarme);
+//        dataWithoutPictures = collectDataWithoutPictures(workbook, accesoriiAlarme);
+//        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+//        writeExcelOutputModel(enrichedData, accesoriiAlarme);
+
+        final String controlAccess = "Control_Acces";
+        excelOutputData = collectData(workbook, controlAccess);
+        dataWithoutPictures = collectDataWithoutPictures(workbook, controlAccess);
+        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+        writeExcelOutputModel(enrichedData, controlAccess);
+    }
+
+    public List<ExcelOutputModel> enrichData(List<ExcelOutputModel> dataWithoutPictures, List<ExcelOutputModel> dataWithPictures) {
+        List<ExcelOutputModel> result = new ArrayList<>();
+        result.addAll(dataWithPictures);
+
+        dataWithoutPictures.forEach(e -> {
+            Integer row = e.getRow();
+            boolean rowFoundInPictureData = result.stream().
+                    filter(o -> o.getRow().equals(row))
+                    .findAny()
+                    .isPresent();
+            if (!rowFoundInPictureData) {
+                result.add(e);
+            }
+        });
+        return result;
+    }
+
+    public List<ExcelOutputModel> collectDataWithoutPictures(Workbook workbook, String sourceSheetName) {
+        List<ExcelOutputModel> data = new ArrayList<>();
+        Sheet sheet = workbook.getSheet(sourceSheetName);
+        int lastRowNum = sheet.getLastRowNum();
+        for (Row row : sheet) {
+            int rowIndex = row.getRowNum();
+            if (rowIndex < 1)
+                continue;
+            Cell descCell = row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            Cell uidCell = row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            Cell cellPrice = row.getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+            String descriptionCellValue = descCell.getStringCellValue();
+            if (descriptionCellValue.length() < 3)
+                continue;
+            if (cellPrice == null)
+                continue;
+
+            ExcelOutputModel dataWithoutPictures = new ExcelOutputModel.ExcelOutputBuilder()
+                    .setStringDescription(descriptionCellValue)
+                    .setRow(String.valueOf(rowIndex))
+                    .setUid(uidCell.getStringCellValue())
+                    .setPrice(cellPrice)
+                    .createExcelOutputModel();
+
+            data.add(dataWithoutPictures);
+        }
+        return data;
     }
 
     // works for sheets ElectricVehicle chargers, Camere IP_MegaPixel Hikvision, FeverScreeningThermal, IP-NVR Hikvision, Camere IP HiWatch by Hikvision,
     // Sisteme_TurboHD_Hikvision, Camere TVI HiWatch by Hikvision, LPR&parking HIKVISION,
     // Sisteme_TURBO_VTX, VideoInterfoane Hikvision, Accesorii_CCTV
-    private List<ExcelOutputModel> collectData(Workbook workbook, String sourceSheetName) throws IOException {
+    public List<ExcelOutputModel> collectData(Workbook workbook, String sourceSheetName) throws IOException {
         List<ExcelOutputModel> excelOutputData = new ArrayList<>();
 
         Sheet sheet = workbook.getSheet(sourceSheetName);
@@ -143,7 +257,11 @@ public class ExcelService {
             if (cellPrice == null) {
                 continue;
             }
-            String pictureName = cell.getStringCellValue().replace("/", "-").replace("\n", "").replace("\"", "");
+            String pictureName = cell.getStringCellValue().
+                    replace("/", "-")
+                    .replace("\\", "-")
+                    .replace("\n", "")
+                    .replace("\"", "");
             String pictureNameFormat = String.format("%s_r%sc%s_%s.jpeg", sourceSheetName.replace(" ", ""), rowLocation, col1Location, pictureName);
             inpPic.getShapeName();
             PictureData pict = inpPic.getPictureData();
@@ -154,17 +272,20 @@ public class ExcelService {
             byte[] data = pict.getData();
             out.write(data);
             out.close();
+            Cell descriptionCell = sheet.getRow(rowLocation).getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            String pictureLocation = excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + sourceSheetName + FILE_SYSTEM_PATH_SEPARATOR + pictureNameFormat;
             ExcelOutputModel excelOutputModel = new ExcelOutputModel.ExcelOutputBuilder()
                     .setRow(String.valueOf(rowLocation))
                     .setUid(pictureName)
-                    .setPictureLocation(excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + sourceSheetName + FILE_SYSTEM_PATH_SEPARATOR + pictureNameFormat)
+                    .setPictureLocation(pictureLocation)
                     .setPrice(cellPrice)
-                    .setDescription(sheet.getRow(rowLocation).getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL))
+                    .setDescription(descriptionCell)
                     .createExcelOutputModel();
             excelOutputData.add(excelOutputModel);
         }
         return excelOutputData;
     }
+
 
     private void writeExcelOutputModel(List<ExcelOutputModel> models, String sourceSheetName) throws IOException {
         XSSFWorkbook workbookOutput = new XSSFWorkbook();

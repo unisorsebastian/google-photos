@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 public class ExcelOutputModel {
     private Integer row;
     private String uid;
@@ -27,24 +28,47 @@ public class ExcelOutputModel {
         this.price = price;
     }
 
+    public ExcelOutputModel() {
+    }
+
     public Integer getRow() {
         return row;
+    }
+
+    public void setRow(Integer row) {
+        this.row = row;
     }
 
     public String getUid() {
         return uid;
     }
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String getPictureLocation() {
         return pictureLocation;
+    }
+
+    public void setPictureLocation(String pictureLocation) {
+        this.pictureLocation = pictureLocation;
     }
 
     public List<String> getDescription() {
         return description;
     }
 
+    public void setDescription(List<String> description) {
+        this.description = description;
+    }
+
     public Integer getPrice() {
         return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public static class ExcelOutputBuilder {
@@ -56,41 +80,7 @@ public class ExcelOutputModel {
         private List<String> description;
         private Integer price;
 
-        public ExcelOutputBuilder setRow(String row) {
-            this.row = Integer.valueOf(row);
-            return this;
-        }
-
-        public ExcelOutputBuilder setUid(String uid) {
-            this.uid = uid;
-            return this;
-        }
-
-        public ExcelOutputBuilder setPictureLocation(String pictureLocation) {
-            this.pictureLocation = pictureLocation;
-            return this;
-        }
-
-        public ExcelOutputBuilder setStringDescription(String stringCellValue) {
-            stringCellValue = stringCellValue.replace("\n\n", ", ");
-            Pattern pattern = Pattern.compile("\n");
-            Matcher matcher = pattern.matcher(stringCellValue);
-            int count = 0;
-            while (matcher.find()) {
-                count++;
-            }
-            if (stringCellValue.contains("•")) {
-                stringCellValue = stringCellValue.replace("•", "");
-                this.description = splitBy(stringCellValue, "\n");
-            } else if (count > 2) {
-                this.description = splitBy(stringCellValue, "\n");
-            } else {
-                this.description = splitBy(stringCellValue, ", ");
-            }
-            return this;
-        }
-
-        public List<String> splitBy(String value, String splitString) {
+        public static List<String> splitBy(String value, String splitString) {
             return Stream.of(value.split(splitString, -1))
                     .map(s -> s.trim())
                     .map(s -> {
@@ -111,6 +101,46 @@ public class ExcelOutputModel {
                     })
                     .map(s -> StringUtils.capitalize(s))
                     .collect(Collectors.toList());
+        }
+
+        public static List<String> extractDescription(String stringCellValue) {
+            List<String> result;
+            stringCellValue = stringCellValue.replace("\n\n", ", ");
+            Pattern pattern = Pattern.compile("\n");
+            Matcher matcher = pattern.matcher(stringCellValue);
+            int count = 0;
+            while (matcher.find()) {
+                count++;
+            }
+            if (stringCellValue.contains("•")) {
+                stringCellValue = stringCellValue.replace("•", "");
+                result = splitBy(stringCellValue, "\n");
+            } else if (count > 2) {
+                result = splitBy(stringCellValue, "\n");
+            } else {
+                result = splitBy(stringCellValue, ", ");
+            }
+            return result;
+        }
+
+        public ExcelOutputBuilder setRow(String row) {
+            this.row = Integer.valueOf(row);
+            return this;
+        }
+
+        public ExcelOutputBuilder setUid(String uid) {
+            this.uid = uid;
+            return this;
+        }
+
+        public ExcelOutputBuilder setPictureLocation(String pictureLocation) {
+            this.pictureLocation = pictureLocation;
+            return this;
+        }
+
+        public ExcelOutputBuilder setStringDescription(String stringCellValue) {
+            this.description = extractDescription(stringCellValue);
+            return this;
         }
 
         public ExcelOutputBuilder setDescription(Cell description) {
