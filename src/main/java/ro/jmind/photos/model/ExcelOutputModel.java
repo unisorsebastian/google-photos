@@ -17,58 +17,42 @@ public class ExcelOutputModel {
     private Integer row;
     private String uid;
     private String pictureLocation;
+    private String pictureLocalLocation;
     private List<String> description;
     private Integer price;
 
-    private ExcelOutputModel(Integer row, String uid, String pictureLocation, List<String> description, Integer price) {
+    private ExcelOutputModel(Integer row, String uid, String pictureLocation, String pictureLocalLocation, List<String> description, Integer price) {
         this.row = row;
         this.uid = uid;
         this.pictureLocation = pictureLocation;
+        this.pictureLocalLocation = pictureLocalLocation;
         this.description = description;
         this.price = price;
     }
 
-    public ExcelOutputModel() {
-    }
 
     public Integer getRow() {
         return row;
-    }
-
-    public void setRow(Integer row) {
-        this.row = row;
     }
 
     public String getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public String getPictureLocation() {
         return pictureLocation;
     }
 
-    public void setPictureLocation(String pictureLocation) {
-        this.pictureLocation = pictureLocation;
+    public String getPictureLocalLocation() {
+        return pictureLocalLocation;
     }
 
     public List<String> getDescription() {
         return description;
     }
 
-    public void setDescription(List<String> description) {
-        this.description = description;
-    }
-
     public Integer getPrice() {
         return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
     }
 
     public static class ExcelOutputBuilder {
@@ -77,10 +61,11 @@ public class ExcelOutputModel {
         private Integer row;
         private String uid;
         private String pictureLocation;
+        private String pictureLocalLocation;
         private List<String> description;
         private Integer price;
 
-        public static List<String> splitBy(String value, String splitString) {
+        public static List<String> splitDescriptionBy(String value, String splitString) {
             return Stream.of(value.split(splitString, -1))
                     .map(s -> s.trim())
                     .map(s -> {
@@ -103,22 +88,22 @@ public class ExcelOutputModel {
                     .collect(Collectors.toList());
         }
 
-        public static List<String> extractDescription(String stringCellValue) {
+        public static List<String> parseDescription(String description) {
             List<String> result;
-            stringCellValue = stringCellValue.replace("\n\n", ", ");
+            description = description.replace("\n\n", ", ");
             Pattern pattern = Pattern.compile("\n");
-            Matcher matcher = pattern.matcher(stringCellValue);
+            Matcher matcher = pattern.matcher(description);
             int count = 0;
             while (matcher.find()) {
                 count++;
             }
-            if (stringCellValue.contains("•")) {
-                stringCellValue = stringCellValue.replace("•", "");
-                result = splitBy(stringCellValue, "\n");
+            if (description.contains("•")) {
+                description = description.replace("•", "");
+                result = splitDescriptionBy(description, "\n");
             } else if (count > 2) {
-                result = splitBy(stringCellValue, "\n");
+                result = splitDescriptionBy(description, "\n");
             } else {
-                result = splitBy(stringCellValue, ", ");
+                result = splitDescriptionBy(description, ", ");
             }
             return result;
         }
@@ -138,8 +123,13 @@ public class ExcelOutputModel {
             return this;
         }
 
+        public ExcelOutputBuilder setPictureLocalLocation(String pictureLocalLocation) {
+            this.pictureLocalLocation = pictureLocalLocation;
+            return this;
+        }
+
         public ExcelOutputBuilder setStringDescription(String stringCellValue) {
-            this.description = extractDescription(stringCellValue);
+            this.description = parseDescription(stringCellValue);
             return this;
         }
 
@@ -156,14 +146,14 @@ public class ExcelOutputModel {
                     this.price = Double.valueOf(price.getStringCellValue()).intValue();
                 }
             } catch (NumberFormatException e) {
-                LOGGER.error("unable to get price, set zero");
+                LOGGER.error("unable to get price at address {}, set zero", price.getAddress());
                 this.price = 0;
             }
             return this;
         }
 
         public ExcelOutputModel createExcelOutputModel() {
-            return new ExcelOutputModel(row, uid, pictureLocation, description, price);
+            return new ExcelOutputModel(row, uid, pictureLocation, pictureLocation, description, price);
         }
     }
 }

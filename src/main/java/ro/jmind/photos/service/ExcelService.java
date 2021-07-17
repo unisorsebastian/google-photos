@@ -1,5 +1,6 @@
 package ro.jmind.photos.service;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
@@ -38,9 +39,11 @@ public class ExcelService {
     }
 
     public void processFile(String excelFileName) throws IOException {
+        logger.info("writing images to base directory {}", excelOutputImages);
         if (!Paths.get(excelOutputImages).toFile().exists()) {
-            logger.info("output directory is missing, trying to create");
-            Files.createDirectories(Paths.get(excelOutputImages));
+            logger.info("output directory '{}' is missing, trying to create", excelOutputImages);
+            Path directories = Files.createDirectories(Paths.get(excelOutputImages));
+            logger.info("output directory '{}' created", directories);
         }
         if (!Paths.get(excelOutputImages).toFile().exists()) {
             String message = String.format("unable to create path %s", excelOutputImages);
@@ -195,7 +198,6 @@ public class ExcelService {
     public List<ExcelOutputModel> collectDataWithoutPictures(Workbook workbook, String sourceSheetName) {
         List<ExcelOutputModel> data = new ArrayList<>();
         Sheet sheet = workbook.getSheet(sourceSheetName);
-        int lastRowNum = sheet.getLastRowNum();
         for (Row row : sheet) {
             int rowIndex = row.getRowNum();
             if (rowIndex < 1)
@@ -222,78 +224,99 @@ public class ExcelService {
         return data;
     }
 
-    // works for sheets ElectricVehicle chargers, Camere IP_MegaPixel Hikvision, FeverScreeningThermal, IP-NVR Hikvision, Camere IP HiWatch by Hikvision,
-    // Sisteme_TurboHD_Hikvision, Camere TVI HiWatch by Hikvision, LPR&parking HIKVISION,
-    // Sisteme_TURBO_VTX, VideoInterfoane Hikvision, Accesorii_CCTV
     public List<ExcelOutputModel> collectData(Workbook workbook, String sourceSheetName) throws IOException {
         List<ExcelOutputModel> excelOutputData = new ArrayList<>();
+
+        Path pictureParentPath = Paths.get(excelOutputImages, sourceSheetName);
+        FileUtils.deleteDirectory(new File(pictureParentPath.toUri()));
+        Files.createDirectories(pictureParentPath);
 
         Sheet sheet = workbook.getSheet(sourceSheetName);
         XSSFDrawing dp = (XSSFDrawing) sheet.createDrawingPatriarch();
 
         List<XSSFShape> shapes = dp.getShapes();
         for (XSSFShape shape : shapes) {
-            XSSFPicture inpPic = null;
+            XSSFPicture picture = null;
             try {
-                inpPic = (XSSFPicture) shape;
+                picture = (XSSFPicture) shape;
             } catch (ClassCastException e) {
                 //fails in Camere IP_MegaPixel Hikvision
-                logger.info("unable to get picture, will skip it");
+                logger.trace("unable to get picture, will skip it");
                 continue;
             }
+            if (picture == null)
+                continue;
 
             XSSFClientAnchor clientAnchor = null;
             try {
-                clientAnchor = inpPic.getClientAnchor();
+                clientAnchor = picture.getClientAnchor();
+                if (clientAnchor == null)
+                    continue;
                 clientAnchor.getCol1();
             } catch (Exception e) {
                 //fails in ElectricVehicle chargers
-                logger.info("there is an exception but was handled");
+                logger.trace("there is an exception but was handled", e);
                 continue;
             }
-            int rowLocation = clientAnchor.getRow1();
-            short col1Location = clientAnchor.getCol1();
+
+            //picture coordinates
+            int rowPictureIndex = clientAnchor.getRow1();
+            short colPictureIndex = clientAnchor.getCol1();
+            short col2PictureIndex = clientAnchor.getCol2();
             //we don't need the picture if is not in colNo 1
-            if (col1Location != 1 || clientAnchor.getCol2() != 1) {
+            if (colPictureIndex != 1 || col2PictureIndex != 1) {
                 continue;
             }
-            Cell cell = sheet.getRow(rowLocation).getCell(col1Location, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            if (cell == null || cell.getStringCellValue() == null) {
-                //fails in Camere IP_MegaPixel Hikvision
-                logger.info("ignore cell at row {} and column {} in sheet {}", rowLocation, col1Location, sourceSheetName);
+
+            Cell cellPicture = sheet.getRow(rowPictureIndex).getCell(colPictureIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            //skip pictures without cell text
+            if (cellPicture == null || cellPicture.getStringCellValue() == null) {
+                // skip because fails in Camere IP_MegaPixel Hikvision - pics without text in cell
+                logger.info("ignore picture because no description at rowIndex {} and collIndex {} in sheet {}", rowPictureIndex, colPictureIndex, sourceSheetName);
                 continue;
             }
-            Cell cellPrice = sheet.getRow(rowLocation).getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            Cell cellPrice = sheet.getRow(rowPictureIndex).getCell(5, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             if (cellPrice == null) {
                 continue;
             }
-            String pictureName = cell.getStringCellValue().
-                    replace("/", "-")
-                    .replace("\\", "-")
-                    .replace("\n", "")
-                    .replace("\"", "");
-            String pictureNameFormat = String.format("%s_r%sc%s_%s.jpeg", sourceSheetName.replace(" ", ""), rowLocation, col1Location, pictureName);
-            inpPic.getShapeName();
-            PictureData pict = inpPic.getPictureData();
-            Path pictureParentPath = Paths.get(excelOutputImages, sourceSheetName);
-            Files.createDirectories(pictureParentPath);
-            Path pictureFilePath = Paths.get(pictureParentPath.toString(), pictureNameFormat);
-            FileOutputStream out = new FileOutputStream(new File(pictureFilePath.toString()), true);
-            byte[] data = pict.getData();
+            String pictureNameTarget = replaceSpecificPathChars(cellPicture);
+            String pictureNameTargetFormat = String.format("%s_r%sc%s_%s.jpeg",
+                    sourceSheetName.replace(" ", ""),
+                    rowPictureIndex, colPictureIndex, pictureNameTarget);
+            PictureData pictureData = picture.getPictureData();
+
+
+            Path pictureFilePath = Paths.get(pictureParentPath.toString(), pictureNameTargetFormat);
+            if (Files.exists(pictureFilePath)) {
+                logger.info("there are multiple pictures at {}, picture overwrite {}", cellPicture.getAddress(), pictureFilePath);
+            }
+            File pictureOutputFile = new File(pictureFilePath.toString());
+            FileOutputStream out = new FileOutputStream(pictureOutputFile, true);
+            byte[] data = pictureData.getData();
             out.write(data);
             out.close();
-            Cell descriptionCell = sheet.getRow(rowLocation).getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            String pictureLocation = excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + sourceSheetName + FILE_SYSTEM_PATH_SEPARATOR + pictureNameFormat;
+
+            Cell descriptionCell = sheet.getRow(rowPictureIndex).getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            String pictureLocation = excelImagesRelativePath + FILE_SYSTEM_PATH_SEPARATOR + sourceSheetName + FILE_SYSTEM_PATH_SEPARATOR + pictureNameTargetFormat;
             ExcelOutputModel excelOutputModel = new ExcelOutputModel.ExcelOutputBuilder()
-                    .setRow(String.valueOf(rowLocation))
-                    .setUid(pictureName)
+                    .setRow(String.valueOf(rowPictureIndex))
+                    .setUid(pictureNameTarget)
                     .setPictureLocation(pictureLocation)
+                    .setPictureLocalLocation(pictureOutputFile.getAbsolutePath())
                     .setPrice(cellPrice)
                     .setDescription(descriptionCell)
                     .createExcelOutputModel();
             excelOutputData.add(excelOutputModel);
         }
         return excelOutputData;
+    }
+
+    public String replaceSpecificPathChars(Cell cellPicture) {
+        return cellPicture.getStringCellValue().
+                replace("/", "-")
+                .replace("\\", "-")
+                .replace("\n", "")
+                .replace("\"", "");
     }
 
 
@@ -305,8 +328,9 @@ public class ExcelService {
         header.createCell(0).setCellValue("originalRowNo");
         header.createCell(1).setCellValue("uid");
         header.createCell(2).setCellValue("imageRelativePath");
-        header.createCell(3).setCellValue("description");
-        header.createCell(4).setCellValue("price");
+        header.createCell(3).setCellValue("imageLocalPath");
+        header.createCell(4).setCellValue("description");
+        header.createCell(5).setCellValue("price");
 
         models.sort(Comparator.comparing(ExcelOutputModel::getRow));
         for (ExcelOutputModel model : models) {
@@ -315,12 +339,14 @@ public class ExcelService {
             XSSFCell originalRowNoCell = row.createCell(0);
             XSSFCell uidCell = row.createCell(1);
             XSSFCell imageRelativePath = row.createCell(2);
-            XSSFCell descriptionCell = row.createCell(3);
-            XSSFCell priceCell = row.createCell(4);
+            XSSFCell imageLocalPath = row.createCell(3);
+            XSSFCell descriptionCell = row.createCell(4);
+            XSSFCell priceCell = row.createCell(5);
 
             originalRowNoCell.setCellValue(model.getRow());
             uidCell.setCellValue(model.getUid());
             imageRelativePath.setCellValue(model.getPictureLocation());
+            imageLocalPath.setCellValue(model.getPictureLocalLocation());
             descriptionCell.setCellValue(model.getDescription().stream().collect(Collectors.joining("\n")));
             priceCell.setCellValue(model.getPrice());
         }
