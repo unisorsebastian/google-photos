@@ -54,115 +54,125 @@ public class ExcelService {
         List<ExcelOutputModel> dataWithoutPictures = null;
         List<ExcelOutputModel> enrichedData = null;
 
-//        final String electricVehicleSheet = "ElectricVehicle chargers";
-//        excelOutputData = collectData(workbook, electricVehicleSheet);
-//        writeExcelOutputModel(excelOutputData, electricVehicleSheet);
-//
-//        final String ipCameraSheet = "Camere IP_MegaPixel Hikvision";
-//        excelOutputData = collectData(workbook, ipCameraSheet);
-//        writeExcelOutputModel(excelOutputData, ipCameraSheet);
-//
-//        final String feverScreeningSheet = "FeverScreeningThermal";
-//        excelOutputData = collectData(workbook, feverScreeningSheet);
-//        writeExcelOutputModel(excelOutputData, feverScreeningSheet);
-//
-//        final String idDvrSheet = "IP-NVR Hikvision";
-//        excelOutputData = collectData(workbook, idDvrSheet);
-//        writeExcelOutputModel(excelOutputData, idDvrSheet);
-//
-//        final String ipCameraHiWatchSheet = "Camere IP HiWatch by Hikvision";
-//        excelOutputData = collectData(workbook, ipCameraHiWatchSheet);
-//        writeExcelOutputModel(excelOutputData, ipCameraHiWatchSheet);
-//
-//        final String sistemeTurboSheet = "Sisteme_TurboHD_Hikvision";
-//        excelOutputData = collectData(workbook, sistemeTurboSheet);
-//        writeExcelOutputModel(excelOutputData, sistemeTurboSheet);
-//
-//        final String camereTVISheet = "Camere TVI HiWatch by Hikvision";
-//        excelOutputData = collectData(workbook, camereTVISheet);
-//        writeExcelOutputModel(excelOutputData, camereTVISheet);
-//
-//        final String parkingSheet = "LPR&parking HIKVISION";
-//        excelOutputData = collectData(workbook, parkingSheet);
-//        writeExcelOutputModel(excelOutputData, parkingSheet);
-//
-//        final String turboVtxSheet = "Sisteme_TURBO_VTX";
-//        excelOutputData = collectData(workbook, turboVtxSheet);
-//        writeExcelOutputModel(excelOutputData, turboVtxSheet);
-//
-//        final String interfonSheet = "VideoInterfoane Hikvision";
-//        excelOutputData = collectData(workbook, interfonSheet);
-//        writeExcelOutputModel(excelOutputData, interfonSheet);
-//
-//        final String accesoriiSheet = "Accesorii_CCTV";
-//        excelOutputData = collectData(workbook, accesoriiSheet);
-//        writeExcelOutputModel(excelOutputData, accesoriiSheet);
-//
-//        final String naAnalogiceConventionaleSheet = "NA_analogice_conventionale";
-//        excelOutputData = collectData(workbook, naAnalogiceConventionaleSheet);
-//        writeExcelOutputModel(excelOutputData, naAnalogiceConventionaleSheet);
+        final String electricVehicleSheet = "ElectricVehicle chargers";
+        excelOutputData = collectData(workbook, electricVehicleSheet);
+        writeExcelOutputModel(excelOutputData, electricVehicleSheet);
 
-//        final String gsmBodyCameraHikvision = "GSM Body Camera Hikvision";
-//        excelOutputData = collectData(workbook, gsmBodyCameraHikvision);
-//        writeExcelOutputModel(excelOutputData, gsmBodyCameraHikvision);
-//
-//        final String smartHomeSolutions = "SmartHome solutions";
-//        excelOutputData = collectData(workbook, smartHomeSolutions);
-//        writeExcelOutputModel(excelOutputData, smartHomeSolutions);
+        final String ipCameraSheet = "Camere IP_MegaPixel Hikvision";
+        excelOutputData = collectData(workbook, ipCameraSheet);
+        writeExcelOutputModel(excelOutputData, ipCameraSheet);
 
-//        final String incendiuAdresabilGlobalFire = "Incendiu_Adresabil_GLOBAL_FIRE_";
-//        excelOutputData = collectData(workbook, incendiuAdresabilGlobalFire);
-//        writeExcelOutputModel(excelOutputData, incendiuAdresabilGlobalFire);
+        final String feverScreeningSheet = "FeverScreeningThermal";
+        excelOutputData = collectData(workbook, feverScreeningSheet);
+        writeExcelOutputModel(excelOutputData, feverScreeningSheet);
 
-//        final String incendiuAdresabilTeletek = "Incendiu_adresabil_Teletek";
-//        excelOutputData = collectData(workbook, incendiuAdresabilTeletek);
-//        writeExcelOutputModel(excelOutputData, incendiuAdresabilTeletek);
+        final String idDvrSheet = "IP-NVR Hikvision";
+        excelOutputData = collectData(workbook, idDvrSheet);
+        writeExcelOutputModel(excelOutputData, idDvrSheet);
 
-        //TODO no pictures in src - not working
-//        final String incendiuBentel = "Incendiu Bentel adr si conv";
-//        excelOutputData = collectData(workbook, incendiuBentel);
-//        writeExcelOutputModel(excelOutputData, incendiuBentel);
+        final String ipCameraHiWatchSheet = "Camere IP HiWatch by Hikvision";
+        excelOutputData = collectData(workbook, ipCameraHiWatchSheet);
+        writeExcelOutputModel(excelOutputData, ipCameraHiWatchSheet);
 
-//        final String incendiuConventional = "Incendiu_conventional";
-//        excelOutputData = collectData(workbook, incendiuConventional);
-//        writeExcelOutputModel(excelOutputData, incendiuConventional);
+        final String sistemeTurboSheet = "Sisteme_TurboHD_Hikvision";
+        excelOutputData = collectData(workbook, sistemeTurboSheet);
+        writeExcelOutputModel(excelOutputData, sistemeTurboSheet);
 
-        //TODO collect row without pic - partial work
-//        final String surseAlimentareEN54 = "Surse alimentare EN54";
-//        excelOutputData = collectData(workbook, surseAlimentareEN54);
-//        writeExcelOutputModel(excelOutputData, surseAlimentareEN54);
-//
-//        final String pyronixHikvision = "Pyronix-Hikvision";
-//        excelOutputData = collectData(workbook, pyronixHikvision);
-//        writeExcelOutputModel(excelOutputData, pyronixHikvision);
+        final String camereTVISheet = "Camere TVI HiWatch by Hikvision";
+        excelOutputData = collectData(workbook, camereTVISheet);
+        writeExcelOutputModel(excelOutputData, camereTVISheet);
 
-//        final String teletek = "TELETEK";
-//        excelOutputData = collectData(workbook, teletek);
-//        writeExcelOutputModel(excelOutputData, teletek);
+        final String parkingSheet = "LPR&parking HIKVISION";
+        excelOutputData = collectData(workbook, parkingSheet);
+        writeExcelOutputModel(excelOutputData, parkingSheet);
 
-//        final String teletekWireless = "Teletek Wireless";
-//        excelOutputData = collectData(workbook, teletekWireless);
-//        writeExcelOutputModel(excelOutputData, teletekWireless);
+        final String turboVtxSheet = "Sisteme_TURBO_VTX";
+        excelOutputData = collectData(workbook, turboVtxSheet);
+        writeExcelOutputModel(excelOutputData, turboVtxSheet);
 
-//        final String eldesAlarms = "ELDES alarms";
-//        excelOutputData = collectData(workbook, eldesAlarms);
-//        writeExcelOutputModel(excelOutputData, eldesAlarms);
+        final String interfonSheet = "VideoInterfoane Hikvision";
+        excelOutputData = collectData(workbook, interfonSheet);
+        writeExcelOutputModel(excelOutputData, interfonSheet);
 
-//        final String opex = "OPTEX";
-//        excelOutputData = collectData(workbook, opex);
-//        writeExcelOutputModel(excelOutputData, opex);
+        final String accesoriiSheet = "Accesorii_CCTV";
+        excelOutputData = collectData(workbook, accesoriiSheet);
+        writeExcelOutputModel(excelOutputData, accesoriiSheet);
 
-//        final String accesoriiAlarme = "Accesorii_alarme";
-//        excelOutputData = collectData(workbook, accesoriiAlarme);
-//        dataWithoutPictures = collectDataWithoutPictures(workbook, accesoriiAlarme);
-//        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
-//        writeExcelOutputModel(enrichedData, accesoriiAlarme);
+        final String naAnalogiceConventionaleSheet = "NA_analogice_conventionale";
+        excelOutputData = collectData(workbook, naAnalogiceConventionaleSheet);
+        writeExcelOutputModel(excelOutputData, naAnalogiceConventionaleSheet);
+
+        final String gsmBodyCameraHikvision = "GSM Body Camera Hikvision";
+        excelOutputData = collectData(workbook, gsmBodyCameraHikvision);
+        writeExcelOutputModel(excelOutputData, gsmBodyCameraHikvision);
+
+        final String smartHomeSolutions = "SmartHome solutions";
+        excelOutputData = collectData(workbook, smartHomeSolutions);
+        writeExcelOutputModel(excelOutputData, smartHomeSolutions);
+
+        final String incendiuAdresabilGlobalFire = "Incendiu_Adresabil_GLOBAL_FIRE_";
+        excelOutputData = collectData(workbook, incendiuAdresabilGlobalFire);
+        writeExcelOutputModel(excelOutputData, incendiuAdresabilGlobalFire);
+
+        final String incendiuAdresabilTeletek = "Incendiu_adresabil_Teletek";
+        excelOutputData = collectData(workbook, incendiuAdresabilTeletek);
+        writeExcelOutputModel(excelOutputData, incendiuAdresabilTeletek);
+
+
+        final String incendiuBentel = "Incendiu Bentel adr si conv";
+        excelOutputData = collectData(workbook, incendiuBentel);
+        dataWithoutPictures = collectDataWithoutPictures(workbook, incendiuBentel);
+        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+        writeExcelOutputModel(enrichedData, incendiuBentel);
+
+        final String incendiuConventional = "Incendiu_conventional";
+        excelOutputData = collectData(workbook, incendiuConventional);
+        writeExcelOutputModel(excelOutputData, incendiuConventional);
+
+        final String surseAlimentareEN54 = "Surse alimentare EN54";
+        excelOutputData = collectData(workbook, surseAlimentareEN54);
+        dataWithoutPictures = collectDataWithoutPictures(workbook, surseAlimentareEN54);
+        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+        writeExcelOutputModel(enrichedData, surseAlimentareEN54);
+
+
+        final String pyronixHikvision = "Pyronix-Hikvision";
+        excelOutputData = collectData(workbook, pyronixHikvision);
+        writeExcelOutputModel(excelOutputData, pyronixHikvision);
+
+        final String teletek = "TELETEK";
+        excelOutputData = collectData(workbook, teletek);
+        writeExcelOutputModel(excelOutputData, teletek);
+
+        final String teletekWireless = "Teletek Wireless";
+        excelOutputData = collectData(workbook, teletekWireless);
+        writeExcelOutputModel(excelOutputData, teletekWireless);
+
+        final String eldesAlarms = "ELDES alarms";
+        excelOutputData = collectData(workbook, eldesAlarms);
+        writeExcelOutputModel(excelOutputData, eldesAlarms);
+
+        final String opex = "OPTEX";
+        excelOutputData = collectData(workbook, opex);
+        writeExcelOutputModel(excelOutputData, opex);
+
+        final String accesoriiAlarme = "Accesorii_alarme";
+        excelOutputData = collectData(workbook, accesoriiAlarme);
+        dataWithoutPictures = collectDataWithoutPictures(workbook, accesoriiAlarme);
+        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+        writeExcelOutputModel(enrichedData, accesoriiAlarme);
 
         final String controlAccess = "Control_Acces";
         excelOutputData = collectData(workbook, controlAccess);
         dataWithoutPictures = collectDataWithoutPictures(workbook, controlAccess);
         enrichedData = enrichData(dataWithoutPictures, excelOutputData);
         writeExcelOutputModel(enrichedData, controlAccess);
+
+        final String publicAddressSonorizare = "PUBLIC_ADDRESS_Sonorizare";
+        excelOutputData = collectData(workbook, publicAddressSonorizare);
+        dataWithoutPictures = collectDataWithoutPictures(workbook, publicAddressSonorizare);
+        enrichedData = enrichData(dataWithoutPictures, excelOutputData);
+        writeExcelOutputModel(enrichedData, publicAddressSonorizare);
     }
 
     public List<ExcelOutputModel> enrichData(List<ExcelOutputModel> dataWithoutPictures, List<ExcelOutputModel> dataWithPictures) {
