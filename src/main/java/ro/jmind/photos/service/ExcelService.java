@@ -240,7 +240,7 @@ public class ExcelService {
             } else {
                 data = new ExcelOutputModel.ExcelOutputBuilder()
                         .setImageAsBytes(null)
-                        .setPictureLocalLocation(pictureNameTarget)
+                        .setPictureLocalLocation("NO_PIC DATA.jpeg")
                         .setRow(e.getRow().toString())
                         .setUid(e.getUid())
                         .setDescription(e.getDescription())
