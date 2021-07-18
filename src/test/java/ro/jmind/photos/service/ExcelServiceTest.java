@@ -55,9 +55,9 @@ public class ExcelServiceTest {
         final FileInputStream sourceFile = new FileInputStream(new File(filePath));
         final Workbook workbook = new XSSFWorkbook(sourceFile);
 
-        List<ExcelOutputModel> dataWithPictures = excelService.collectData(workbook, sheetName);
+        List<ExcelOutputModel> dataWithPictures = excelService.collectPictureData(workbook, sheetName);
 
-        List<ExcelOutputModel> dataWithoutPictures = excelService.collectDataWithoutPictures(workbook, sheetName);
+        List<ExcelOutputModel> dataWithoutPictures = excelService.collectStringData(workbook, sheetName);
         assertTrue(dataWithoutPictures.size() >= dataWithPictures.size());
 
         Optional<String> descFromPictureData = dataWithPictures.stream()
@@ -69,7 +69,7 @@ public class ExcelServiceTest {
                 .map(m -> m.getDescription().stream().collect(Collectors.joining("\n")))
                 .findFirst();
         assertEquals(descFromPictureData, descFromData);
-        List<ExcelOutputModel> excelOutputModels = excelService.enrichData(dataWithoutPictures, dataWithPictures);
+        List<ExcelOutputModel> excelOutputModels = excelService.enrichPictureData(dataWithoutPictures, dataWithPictures);
         assertTrue(excelOutputModels.size() >= dataWithoutPictures.size());
         assertTrue(excelOutputModels.size() >= dataWithPictures.size());
     }
