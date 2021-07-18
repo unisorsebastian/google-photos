@@ -13,15 +13,17 @@ import java.util.List;
 public class ExcelOutputModel {
     private Integer row;
     private String uid;
+    private String pictureName;
     private String pictureLocation;
     private String pictureLocalLocation;
     private List<String> description;
     private Integer price;
     private byte[] imageAsBytes;
 
-    private ExcelOutputModel(Integer row, String uid, String pictureLocation, String pictureLocalLocation, List<String> description, Integer price, byte[] imageAsBytes) {
+    private ExcelOutputModel(Integer row, String uid, String pictureName, String pictureLocation, String pictureLocalLocation, List<String> description, Integer price, byte[] imageAsBytes) {
         this.row = row;
         this.uid = uid;
+        this.pictureName = pictureName;
         this.pictureLocation = pictureLocation;
         this.pictureLocalLocation = pictureLocalLocation;
         this.description = description;
@@ -36,6 +38,10 @@ public class ExcelOutputModel {
 
     public String getUid() {
         return uid;
+    }
+
+    public String getPictureName() {
+        return pictureName;
     }
 
     public String getPictureLocation() {
@@ -63,6 +69,7 @@ public class ExcelOutputModel {
 
         private Integer row;
         private String uid;
+        private String pictureName;
         private String pictureLocation;
         private String pictureLocalLocation;
         private List<String> description;
@@ -81,6 +88,11 @@ public class ExcelOutputModel {
 
         public ExcelOutputBuilder setUid(String uid) {
             this.uid = uid;
+            return this;
+        }
+
+        public ExcelOutputBuilder setPictureName(String pictureName) {
+            this.pictureName = pictureName;
             return this;
         }
 
@@ -131,7 +143,7 @@ public class ExcelOutputModel {
         }
 
         public ExcelOutputModel createExcelOutputModel() {
-            return new ExcelOutputModel(row, uid, pictureLocation, pictureLocalLocation, description, price, imageAsBytes);
+            return new ExcelOutputModel(row, uid, pictureName, pictureLocation, pictureLocalLocation, description, price, imageAsBytes);
         }
     }
 }

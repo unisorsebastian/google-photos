@@ -231,7 +231,7 @@ public class ExcelService {
             if (foundPictureData != null && foundPictureData.size() > 0) {
                 data = new ExcelOutputModel.ExcelOutputBuilder()
                         .setImageAsBytes(foundPictureData.get(foundPictureData.size() - 1).getImageAsBytes())
-                        .setPictureLocalLocation(pictureNameTarget)
+                        .setPictureName(pictureNameTarget)
                         .setRow(e.getRow().toString())
                         .setUid(e.getUid())
                         .setDescription(e.getDescription())
@@ -240,7 +240,7 @@ public class ExcelService {
             } else {
                 data = new ExcelOutputModel.ExcelOutputBuilder()
                         .setImageAsBytes(null)
-                        .setPictureLocalLocation("NO_PIC DATA.jpeg")
+                        .setPictureName("NO_PIC DATA.jpeg")
                         .setRow(e.getRow().toString())
                         .setUid(e.getUid())
                         .setDescription(e.getDescription())
@@ -395,10 +395,11 @@ public class ExcelService {
         XSSFRow header = outputSheet.createRow(rowCount);
         header.createCell(0).setCellValue("originalRowNo");
         header.createCell(1).setCellValue("uid");
-        header.createCell(2).setCellValue("imageRelativePath");
-        header.createCell(3).setCellValue("imageLocalPath");
-        header.createCell(4).setCellValue("description");
-        header.createCell(5).setCellValue("price");
+        header.createCell(2).setCellValue("imageName");
+        header.createCell(3).setCellValue("imageRelativePath");
+        header.createCell(4).setCellValue("imageLocalPath");
+        header.createCell(5).setCellValue("description");
+        header.createCell(6).setCellValue("price");
 
         models.sort(Comparator.comparing(ExcelOutputModel::getRow));
         for (ExcelOutputModel model : models) {
@@ -406,13 +407,15 @@ public class ExcelService {
 
             XSSFCell originalRowNoCell = row.createCell(0);
             XSSFCell uidCell = row.createCell(1);
-            XSSFCell imageRelativePath = row.createCell(2);
-            XSSFCell imageLocalPath = row.createCell(3);
-            XSSFCell descriptionCell = row.createCell(4);
-            XSSFCell priceCell = row.createCell(5);
+            XSSFCell pictureNameCell = row.createCell(2);
+            XSSFCell imageRelativePath = row.createCell(3);
+            XSSFCell imageLocalPath = row.createCell(4);
+            XSSFCell descriptionCell = row.createCell(5);
+            XSSFCell priceCell = row.createCell(6);
 
             originalRowNoCell.setCellValue(model.getRow());
             uidCell.setCellValue(model.getUid());
+            pictureNameCell.setCellValue(model.getPictureName());
             imageRelativePath.setCellValue(model.getPictureLocation());
             imageLocalPath.setCellValue(model.getPictureLocalLocation());
             descriptionCell.setCellValue(model.getDescription().stream().collect(Collectors.joining("\n")));
