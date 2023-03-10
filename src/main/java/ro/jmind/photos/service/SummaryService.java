@@ -23,6 +23,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
@@ -62,13 +64,26 @@ public class SummaryService {
         mainWorkbook = new XSSFWorkbook(sourceFileStream);
         Row lastRowByColName = getLastRowByColName(mainWorkbook, "main", "invoiceId");
         int invoiceIdColIndex = getColumnIndex("invoiceId", mainWorkbook.getSheet("main"));
-        int invoiceDateIndex = getColumnIndex("invoiceDate", mainWorkbook.getSheet("main"));
         //JMD 073
         String lastInvoiceId = lastRowByColName.getCell(invoiceIdColIndex).getStringCellValue();
         Invoice invoiceDataFromMainFile = getInvoiceData(mainWorkbook, lastInvoiceId);
 
-        generateExcelInvoice(mainWorkbook, invoiceDataFromMainFile, "D:\\Users\\sebastian\\workspace\\");
+        File generatedFile = generateExcelInvoice(mainWorkbook, invoiceDataFromMainFile, "D:\\Users\\sebastian\\workspace\\");
 
+    }
+
+    public void generateInvoices() throws IOException {
+        final File sourceFile = new File(excelBaseFile);
+        FileInputStream sourceFileStream = new FileInputStream(sourceFile);
+        Workbook mainWorkbook = new XSSFWorkbook(sourceFileStream);
+        Collection<Invoice> allInvoicesData = getAllInvoicesData(mainWorkbook);
+        for (Invoice invoice : allInvoicesData) {
+            sourceFileStream = new FileInputStream(sourceFile);
+            mainWorkbook = new XSSFWorkbook(sourceFileStream);
+            generateExcelInvoice(mainWorkbook, invoice, "D:\\Users\\sebastian\\workspace\\");
+        }
+
+        System.out.println();
     }
 
     public File generateExcelInvoice(Workbook mainWorkbook, Invoice invoiceData, String fileLocation) throws IOException {
@@ -85,6 +100,8 @@ public class SummaryService {
                 removeOtherSheets(templateName, mainWorkbook);
 
                 updateVaubanTemplate(mainWorkbook, invoiceData);
+
+                mainWorkbook.setSheetName(mainWorkbook.getSheetIndex("vauban"),"invoice");
 
                 writeExcelFile(outputFile, mainWorkbook);
 
@@ -135,21 +152,26 @@ public class SummaryService {
         sheet.getRow(37).getCell(10).setCellValue(vat);
         //total plata
         sheet.getRow(38).getCell(10).setCellValue(total);
+
+        sheet.getRow(0).getCell(1).setAsActiveCell();
     }
 
 
     public void readExcel() throws IOException {
 
 
-        createInvoice();
-
+//        createInvoice();
+        generateInvoices();
 
     }
 
     public Invoice getInvoiceData(final Workbook mainWorkbook, String invoiceId) {
         Row row = findByInvoiceId(mainWorkbook, "main", "invoiceId", invoiceId);
         Map<String, Integer> columnNameIndexMap = columnNameIndexMap(mainWorkbook, "main");
+        return createInvoiceDataFromRow(row, columnNameIndexMap);
+    }
 
+    private Invoice createInvoiceDataFromRow(Row row, Map<String, Integer> columnNameIndexMap) {
         LocalDate invoiceDate = row.getCell(columnNameIndexMap.get("invoiceDate")).getDateCellValue().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -160,6 +182,24 @@ public class SummaryService {
                 .amount(row.getCell(columnNameIndexMap.get("amount")).getNumericCellValue())
                 .template(row.getCell(columnNameIndexMap.get("template")).getStringCellValue())
                 .build();
+    }
+
+    public Collection<Invoice> getAllInvoicesData(final Workbook mainWorkbook) {
+        Collection<Invoice> result = new ArrayList<>();
+
+        Map<String, Integer> columnNameIndexMap = columnNameIndexMap(mainWorkbook, "main");
+        Sheet mainSheet = mainWorkbook.getSheet("main");
+        Row lastRowByColName = getLastRowByColName(mainWorkbook, "main", "invoiceId");
+        int lastRowIndex = lastRowByColName.getRowNum();
+
+        for (int i = 1; i <= lastRowIndex; i++) {
+            Row row = mainSheet.getRow(i);
+            Invoice invoiceDataFromRow = createInvoiceDataFromRow(row, columnNameIndexMap);
+            result.add(invoiceDataFromRow);
+        }
+
+
+        return result;
     }
 
     public Row getRefRow(final Workbook mainWorkbook) {
