@@ -31,4 +31,13 @@ public class Commands {
         return format;
     }
 
+    @ShellMethod("entry point")
+    public String justCheck(String param1) {
+        long startTime = System.currentTimeMillis();
+        commandService.readExcelData();
+        double timeTook = (double) Math.round((((double) (System.currentTimeMillis() - startTime) / 1000) * 100)) / 100;
+        String format = String.format("send param1 is \"%s\". Done in %s seconds", param1, timeTook);
+        return format;
+    }
+
 }
